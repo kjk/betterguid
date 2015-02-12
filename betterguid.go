@@ -35,7 +35,7 @@ func init() {
 func New() string {
 	var id [8 + 12]byte
 	mu.Lock()
-	timeMs := time.Now().UnixNano() / 1e6
+	timeMs := time.Now().UTC().UnixNano() / 1e6
 	if timeMs == lastPushTimeMs {
 		// increment lastRandChars
 		for i := 0; i < 12; i++ {
