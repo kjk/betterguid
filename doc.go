@@ -1,14 +1,7 @@
-This is Go package to generate guid (globally unique id) with good properties
+/*
 
-Usage:
-```
-import "github.com/kjk/betterguid"
-
-id := betterguid.New()
-fmt.Printf("guid: '%s'\n", id)
-```
-
-Generated guids have good properties:
+Package betterguid generates 20-character guid (globally unique id) strings
+with good properties:
 * they're 20 character strings, safe for inclusion in urls (don't require escaping)
 * they're based on timestamp so that they sort **after** any existing ids
 * they contain 72-bits of random data after the timestamp so that IDs won't
@@ -24,3 +17,6 @@ Read https://www.firebase.com/blog/2015-02-11-firebase-unique-identifiers.html
 for more info.
 
 Based on https://gist.github.com/mikelehen/3596a30bd69384624c11
+
+*/
+package betterguid
