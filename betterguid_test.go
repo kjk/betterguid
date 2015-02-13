@@ -32,12 +32,19 @@ func Test(t *testing.T) {
 
 func doMany(t *testing.T, wg *sync.WaitGroup) {
 	ids := make(map[string]bool)
+	prev := ""
 	for i := 0; i < 1000000; i++ {
 		id := New()
 		if _, exists := ids[id]; exists {
 			t.Fatalf("generated duplicate id '%s'", id)
 		}
 		ids[id] = true
+		if prev != "" {
+			if id <= prev {
+				t.Fatalf("id ('%s') must be > prev ('%s')", id, prev)
+			}
+		}
+		prev = id
 	}
 	wg.Done()
 }
