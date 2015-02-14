@@ -1,7 +1,7 @@
 This is Go package to generate guid (globally unique id) with good properties
 
 Usage:
-```
+```go
 import "github.com/kjk/betterguid"
 
 id := betterguid.New()
