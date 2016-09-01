@@ -32,10 +32,7 @@ func init() {
 	}
 }
 
-func Descending() string {
-	return generate(false)
-}
-
+// Ascending creates a new ascending guid
 func Ascending() string {
 	return generate(true)
 }
@@ -43,6 +40,11 @@ func Ascending() string {
 // New creates a new guid.
 func New() string {
 	return generate(true)
+}
+
+// Descending creates a new descending guid
+func Descending() string {
+	return generate(false)
 }
 
 func generate(ascending bool) string {
