@@ -8,7 +8,8 @@ import (
 
 const (
 	// Modeled after base64 web-safe chars, but ordered by ASCII.
-	pushChars = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
+	pushChars        = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
+	pushCharsReverse = "zyxwvutsrqponmlkjihgfedcba_ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210-"
 )
 
 var (
@@ -18,16 +19,9 @@ var (
 	// timestamp to prevent collisions with other clients.  We store the last characters we
 	// generated because in the event of a collision, we'll use those same characters except
 	// "incremented" by one.
-	lastRandChars    [12]int
-	mu               sync.Mutex
-	rnd              *rand.Rand
-	pushCharsReverse = func() string {
-		r := []rune(pushChars)
-		for i, j := 0, len(r)-1; i < len(r)/2; i, j = i+1, j-1 {
-			r[i], r[j] = r[j], r[i]
-		}
-		return string(r)
-	}()
+	lastRandChars [12]int
+	mu            sync.Mutex
+	rnd           *rand.Rand
 )
 
 func init() {
