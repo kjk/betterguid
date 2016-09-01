@@ -30,6 +30,14 @@ func Test(t *testing.T) {
 	}
 }
 
+func TestDescending(t *testing.T) {
+	id := Descending()
+	id2 := Descending()
+	if id2 > id {
+		t.Fatal("thats incorrect")
+	}
+}
+
 func doMany(t *testing.T, wg *sync.WaitGroup) {
 	ids := make(map[string]bool)
 	prev := ""

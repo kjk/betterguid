@@ -8,7 +8,8 @@ import (
 
 const (
 	// Modeled after base64 web-safe chars, but ordered by ASCII.
-	pushChars = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
+	pushChars        = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
+	pushCharsReverse = "zyxwvutsrqponmlkjihgfedcba_ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210-"
 )
 
 var (
@@ -31,8 +32,26 @@ func init() {
 	}
 }
 
+// Ascending creates a new ascending guid
+func Ascending() string {
+	return generate(true)
+}
+
 // New creates a new guid.
 func New() string {
+	return generate(true)
+}
+
+// Descending creates a new descending guid
+func Descending() string {
+	return generate(false)
+}
+
+func generate(ascending bool) string {
+	pool := pushChars
+	if !ascending {
+		pool = pushCharsReverse
+	}
 	var id [8 + 12]byte
 	mu.Lock()
 	timeMs := time.Now().UTC().UnixNano() / 1e6
@@ -50,14 +69,14 @@ func New() string {
 	lastPushTimeMs = timeMs
 	// put random as the second part
 	for i := 0; i < 12; i++ {
-		id[19-i] = pushChars[lastRandChars[i]]
+		id[19-i] = pool[lastRandChars[i]]
 	}
 	mu.Unlock()
 
 	// put current time at the beginning
 	for i := 7; i >= 0; i-- {
 		n := int(timeMs % 64)
-		id[i] = pushChars[n]
+		id[i] = pool[n]
 		timeMs = timeMs / 64
 	}
 	return string(id[:])
