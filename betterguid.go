@@ -21,6 +21,7 @@ var (
 	lastRandChars [12]int
 	mu            sync.Mutex
 	rnd           *rand.Rand
+	pushCharsRev = stringutil.Reverse(pushChars)
 )
 
 func init() {
@@ -31,8 +32,20 @@ func init() {
 	}
 }
 
+func Descending() string {
+	return generate(false)	
+}
+
 // New creates a new guid.
 func New() string {
+	return generate(true)	
+}
+
+func generate(ascending bool) string {
+	pool := pushChars
+	if !ascending {
+		pool = pushCharsRev	
+	}
 	var id [8 + 12]byte
 	mu.Lock()
 	timeMs := time.Now().UTC().UnixNano() / 1e6
@@ -50,14 +63,14 @@ func New() string {
 	lastPushTimeMs = timeMs
 	// put random as the second part
 	for i := 0; i < 12; i++ {
-		id[19-i] = pushChars[lastRandChars[i]]
+		id[19-i] = pool[lastRandChars[i]]
 	}
 	mu.Unlock()
 
 	// put current time at the beginning
 	for i := 7; i >= 0; i-- {
 		n := int(timeMs % 64)
-		id[i] = pushChars[n]
+		id[i] = pool[n]
 		timeMs = timeMs / 64
 	}
 	return string(id[:])
