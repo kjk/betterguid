@@ -18,10 +18,16 @@ var (
 	// timestamp to prevent collisions with other clients.  We store the last characters we
 	// generated because in the event of a collision, we'll use those same characters except
 	// "incremented" by one.
-	lastRandChars [12]int
-	mu            sync.Mutex
-	rnd           *rand.Rand
-	pushCharsRev = stringutil.Reverse(pushChars)
+	lastRandChars    [12]int
+	mu               sync.Mutex
+	rnd              *rand.Rand
+	pushCharsReverse = func() string {
+		r := []rune(pushChars)
+		for i, j := 0, len(r)-1; i < len(r)/2; i, j = i+1, j-1 {
+			r[i], r[j] = r[j], r[i]
+		}
+		return string(r)
+	}()
 )
 
 func init() {
@@ -33,18 +39,22 @@ func init() {
 }
 
 func Descending() string {
-	return generate(false)	
+	return generate(false)
+}
+
+func Ascending() string {
+	return generate(true)
 }
 
 // New creates a new guid.
 func New() string {
-	return generate(true)	
+	return generate(true)
 }
 
 func generate(ascending bool) string {
 	pool := pushChars
 	if !ascending {
-		pool = pushCharsRev	
+		pool = pushCharsReverse
 	}
 	var id [8 + 12]byte
 	mu.Lock()
