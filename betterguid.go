@@ -44,19 +44,19 @@ func Ascending() string {
 	return generate(timeMs, true)
 }
 
-// Ascending creates a new ascending guid
+// AscendingFrom creates a new ascending guid based on a provided time in ms
 func AscendingFrom(timeMs int64) string {
 	return generate(timeMs, true)
-}
-
-// Ascending creates a new ascending guid
-func DescendingFrom(timeMs int64) string {
-	return generate(timeMs, false)
 }
 
 // Descending creates a new descending guid
 func Descending() string {
 	timeMs := time.Now().UTC().UnixNano() / 1e6
+	return generate(timeMs, false)
+}
+
+// DescendingFrom creates a new descending guid based on a provided time in ms
+func DescendingFrom(timeMs int64) string {
 	return generate(timeMs, false)
 }
 
