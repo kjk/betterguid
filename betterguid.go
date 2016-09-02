@@ -32,29 +32,41 @@ func init() {
 	}
 }
 
-// Ascending creates a new ascending guid
-func Ascending() string {
-	return generate(true)
-}
-
 // New creates a new guid.
 func New() string {
-	return generate(true)
+	timeMs := time.Now().UTC().UnixNano() / 1e6
+	return generate(timeMs, true)
+}
+
+// Ascending creates a new ascending guid
+func Ascending() string {
+	timeMs := time.Now().UTC().UnixNano() / 1e6
+	return generate(timeMs, true)
+}
+
+// AscendingFrom creates a new ascending guid based on a provided time in ms
+func AscendingFrom(timeMs int64) string {
+	return generate(timeMs, true)
 }
 
 // Descending creates a new descending guid
 func Descending() string {
-	return generate(false)
+	timeMs := time.Now().UTC().UnixNano() / 1e6
+	return generate(timeMs, false)
 }
 
-func generate(ascending bool) string {
+// DescendingFrom creates a new descending guid based on a provided time in ms
+func DescendingFrom(timeMs int64) string {
+	return generate(timeMs, false)
+}
+
+func generate(timeMs int64, ascending bool) string {
 	pool := pushChars
 	if !ascending {
 		pool = pushCharsReverse
 	}
 	var id [8 + 12]byte
 	mu.Lock()
-	timeMs := time.Now().UTC().UnixNano() / 1e6
 	if timeMs == lastPushTimeMs {
 		// increment lastRandChars
 		for i := 0; i < 12; i++ {
@@ -72,7 +84,6 @@ func generate(ascending bool) string {
 		id[19-i] = pool[lastRandChars[i]]
 	}
 	mu.Unlock()
-
 	// put current time at the beginning
 	for i := 7; i >= 0; i-- {
 		n := int(timeMs % 64)
