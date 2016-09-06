@@ -10,6 +10,8 @@ const (
 	// Modeled after base64 web-safe chars, but ordered by ASCII.
 	pushChars        = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
 	pushCharsReverse = "zyxwvutsrqponmlkjihgfedcba_ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210-"
+	MAX_DESCENDING   = "zzzzzzzzzzzzzzzzzzzz"
+	MAX_ASCENDING    = "--------------------"
 )
 
 var (
