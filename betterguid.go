@@ -24,7 +24,7 @@ var (
 	lastRandChars [12]int
 	mu            sync.Mutex
 	rnd           *rand.Rand
-	charlen = len(pushChars)
+	charlen       = len(pushChars)
 )
 
 func init() {
@@ -38,36 +38,32 @@ func init() {
 // New creates a new guid.
 func New() string {
 	timeMs := time.Now().UTC().UnixNano() / 1e6
-	return generate(timeMs, true)
+	return generate(timeMs, pushChars)
 }
 
 // Ascending creates a new ascending guid
 func Ascending() string {
 	timeMs := time.Now().UTC().UnixNano() / 1e6
-	return generate(timeMs, true)
+	return AscendingFrom(timeMs)
 }
 
 // AscendingFrom creates a new ascending guid based on a provided time in ms
 func AscendingFrom(timeMs int64) string {
-	return generate(timeMs, true)
+	return generate(timeMs, pushChars)
 }
 
 // Descending creates a new descending guid
 func Descending() string {
 	timeMs := time.Now().UTC().UnixNano() / 1e6
-	return generate(timeMs, false)
+	return DescendingFrom(timeMs)
 }
 
 // DescendingFrom creates a new descending guid based on a provided time in ms
 func DescendingFrom(timeMs int64) string {
-	return generate(timeMs, false)
+	return generate(timeMs, pushCharsReverse)
 }
 
-func generate(timeMs int64, ascending bool) string {
-	pool := pushChars
-	if !ascending {
-		pool = pushCharsReverse
-	}
+func generate(timeMs int64, pool string) string {
 	var id [8 + 12]byte
 	mu.Lock()
 	if timeMs == lastPushTimeMs {
@@ -89,9 +85,9 @@ func generate(timeMs int64, ascending bool) string {
 	mu.Unlock()
 	// put current time at the beginning
 	for i := 7; i >= 0; i-- {
-		n := int(timeMs % charlen)
+		n := int(timeMs % int64(charlen))
 		id[i] = pool[n]
-		timeMs = timeMs / charlen
+		timeMs = timeMs / int64(charlen)
 	}
 	return string(id[:])
 }
