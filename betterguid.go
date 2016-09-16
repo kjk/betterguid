@@ -37,8 +37,7 @@ func init() {
 
 // New creates a new guid.
 func New() string {
-	timeMs := time.Now().UTC().UnixNano() / 1e6
-	return generate(timeMs, pushChars)
+	return Ascending()
 }
 
 // Ascending creates a new ascending guid
