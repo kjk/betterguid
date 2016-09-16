@@ -8,10 +8,10 @@ import (
 
 const (
 	// Modeled after base64 web-safe chars, but ordered by ASCII.
-	pushChars        = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
-	pushCharsReverse = "zyxwvutsrqponmlkjihgfedcba_ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210-"
+	pushChars        = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz"
+	pushCharsReverse = "zyxwvutsrqponmlkjihgfedcba_ZYXWVUTSRQPONMLKJIHGFEDCBA9876543210"
 	MAX_DESCENDING   = "zzzzzzzzzzzzzzzzzzzz"
-	MAX_ASCENDING    = "--------------------"
+	MAX_ASCENDING    = "00000000000000000000"
 )
 
 var (
@@ -24,13 +24,14 @@ var (
 	lastRandChars [12]int
 	mu            sync.Mutex
 	rnd           *rand.Rand
+	charlen = len(pushChars)
 )
 
 func init() {
 	// have to seed to get randomness
 	rnd = rand.New(rand.NewSource(time.Now().UnixNano()))
 	for i := 0; i < 12; i++ {
-		lastRandChars[i] = rnd.Intn(64)
+		lastRandChars[i] = rnd.Intn(charlen)
 	}
 }
 
@@ -73,7 +74,7 @@ func generate(timeMs int64, ascending bool) string {
 		// increment lastRandChars
 		for i := 0; i < 12; i++ {
 			lastRandChars[i]++
-			if lastRandChars[i] < 64 {
+			if lastRandChars[i] < charlen {
 				break
 			}
 			// increment the next byte
@@ -88,9 +89,9 @@ func generate(timeMs int64, ascending bool) string {
 	mu.Unlock()
 	// put current time at the beginning
 	for i := 7; i >= 0; i-- {
-		n := int(timeMs % 64)
+		n := int(timeMs % charlen)
 		id[i] = pool[n]
-		timeMs = timeMs / 64
+		timeMs = timeMs / charlen
 	}
 	return string(id[:])
 }
