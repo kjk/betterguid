@@ -30,6 +30,11 @@ func Test(t *testing.T) {
 	}
 }
 
+func TestCrypto(t *testing.T) {
+	Cryptographic = true
+	Test(t)
+}
+
 func doMany(t *testing.T, wg *sync.WaitGroup) {
 	ids := make(map[string]bool)
 	prev := ""
@@ -57,4 +62,9 @@ func TestMany(t *testing.T) {
 		go doMany(t, &wg)
 	}
 	wg.Wait()
+}
+
+func TestManyCrypto(t *testing.T) {
+	Cryptographic = true
+	TestMany(t)
 }
