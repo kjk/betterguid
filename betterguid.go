@@ -25,6 +25,7 @@ var (
 	rnd           *rand.Rand
 )
 
+// Set this flag to true if you need to use a cryptographically secure PRNG
 var Cryptographic bool
 
 func init() {
