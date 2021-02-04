@@ -1,6 +1,8 @@
 package betterguid
 
 import (
+	cryptorand "crypto/rand"
+	"math/big"
 	"math/rand"
 	"sync"
 	"time"
@@ -23,6 +25,9 @@ var (
 	rnd           *rand.Rand
 )
 
+// Set this flag to true if you need to use a cryptographically secure PRNG
+var Cryptographic bool
+
 func init() {
 	// seed to get randomness
 	rnd = rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -30,7 +35,16 @@ func init() {
 
 func genRandPart() {
 	for i := 0; i < len(lastRandChars); i++ {
-		lastRandChars[i] = rnd.Intn(64)
+		if Cryptographic {
+			n, err := cryptorand.Int(cryptorand.Reader, big.NewInt(64))
+			if err != nil {
+				lastRandChars[i] = rnd.Intn(64)
+			} else {
+				lastRandChars[i] = int(n.Int64())
+			}
+		} else {
+			lastRandChars[i] = rnd.Intn(64)
+		}
 	}
 }
 
